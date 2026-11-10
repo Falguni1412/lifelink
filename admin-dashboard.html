@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin dashboard – LifeLink</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+</head>
+<body class="dash">
+<div id="app-loader"><img class="loader-drop" src="assets/logo.svg" alt="Loading"></div>
+
+<aside class="sidebar" id="sidebar">
+  <a class="brand mb-3 px-2" href="index.html"><img src="assets/logo.svg" alt=""><span>Life<b>Link</b></span></a>
+  <div class="nav-label">Administration</div>
+  <nav>
+    <a class="side-link" href="#overview" data-section="overview" data-title="Overview"><i class="bi bi-grid-1x2-fill"></i>Overview</a>
+    <a class="side-link" href="#donors" data-section="donors" data-title="Donors"><i class="bi bi-droplet-half"></i>Donors</a>
+    <a class="side-link" href="#receivers" data-section="receivers" data-title="Receivers"><i class="bi bi-person-heart"></i>Receivers</a>
+    <a class="side-link" href="#requests" data-section="requests" data-title="Blood requests"><i class="bi bi-card-checklist"></i>Blood requests</a>
+    <a class="side-link" href="#banks" data-section="banks" data-title="Blood banks"><i class="bi bi-hospital"></i>Blood banks</a>
+    <a class="side-link" href="#camps" data-section="camps" data-title="Donation camps"><i class="bi bi-calendar-event"></i>Donation camps</a>
+    <a class="side-link" href="#activity" data-section="activity" data-title="Activity log"><i class="bi bi-activity"></i>Activity</a>
+  </nav>
+  <div class="side-user">
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <span class="js-user-avatar" data-size="40"></span>
+      <div class="min-w-0"><div class="fw-bold small text-truncate js-user-name"></div><div class="text-muted js-user-role" style="font-size:.72rem">Admin</div></div>
+    </div>
+    <button class="btn btn-light btn-sm w-100 js-logout"><i class="bi bi-box-arrow-right me-1"></i>Log out</button>
+  </div>
+</aside>
+<div id="sidebar-backdrop"></div>
+
+<div class="main">
+  <header class="topbar">
+    <button class="btn btn-light d-lg-none" id="menu-toggle" aria-label="Menu"><i class="bi bi-list fs-5"></i></button>
+    <h1 id="page-title">Overview</h1>
+    <div class="ms-auto d-flex align-items-center gap-2">
+      <span class="badge rounded-pill text-bg-dark d-none d-sm-inline"><i class="bi bi-shield-check me-1"></i>Admin</span>
+      <a href="index.html" class="btn btn-light btn-sm">View site</a>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <!-- ============ OVERVIEW ============ -->
+    <section class="dash-section" id="sec-overview">
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-xl-3"><div class="ll-card stat-card"><span class="stat-icon"><i class="bi bi-droplet-half"></i></span><div><div class="stat-num" id="st-donors">0</div><div class="stat-label">Registered donors</div></div></div></div>
+        <div class="col-6 col-xl-3"><div class="ll-card stat-card"><span class="stat-icon blue"><i class="bi bi-person-heart"></i></span><div><div class="stat-num" id="st-receivers">0</div><div class="stat-label">Receivers</div></div></div></div>
+        <div class="col-6 col-xl-3"><div class="ll-card stat-card"><span class="stat-icon amber"><i class="bi bi-broadcast"></i></span><div><div class="stat-num" id="st-open">0</div><div class="stat-label">Open requests</div></div></div></div>
+        <div class="col-6 col-xl-3"><div class="ll-card stat-card"><span class="stat-icon green"><i class="bi bi-check2-all"></i></span><div><div class="stat-num" id="st-fulfilled">0</div><div class="stat-label">Fulfilled requests</div></div></div></div>
+        <div class="col-6 col-xl-3"><div class="ll-card stat-card"><span class="stat-icon green"><i class="bi bi-person-check-fill"></i></span><div><div class="stat-num" id="st-avail">0</div><div class="stat-label">Donors available now</div></div></div></div>
+        <div class="col-6 col-xl-3"><div class="ll-card stat-card"><span class="stat-icon violet"><i class="bi bi-hospital"></i></span><div><div class="stat-num" id="st-banks">0</div><div class="stat-label">Blood banks</div></div></div></div>
+        <div class="col-6 col-xl-3"><div class="ll-card stat-card"><span class="stat-icon violet"><i class="bi bi-calendar-event"></i></span><div><div class="stat-num" id="st-camps">0</div><div class="stat-label">Upcoming camps</div></div></div></div>
+        <div class="col-6 col-xl-3"><div class="ll-card stat-card"><span class="stat-icon"><i class="bi bi-lightning-charge-fill"></i></span><div><div class="stat-num" id="st-critical">0</div><div class="stat-label">Critical open requests</div></div></div></div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <div class="ll-card p-4 h-100">
+            <h2 class="h6 fw-bold mb-3">Donors by blood group</h2>
+            <div id="group-bars"></div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="ll-card p-4 h-100">
+            <h2 class="h6 fw-bold mb-3">Open requests by blood group</h2>
+            <div id="demand-bars"></div>
+            <p class="small text-muted mt-3 mb-0" id="gap-note"></p>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="ll-card p-4 h-100">
+            <h2 class="h6 fw-bold mb-2">Recent activity</h2>
+            <div id="mini-feed"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ DONORS ============ -->
+    <section class="dash-section d-none" id="sec-donors">
+      <div class="filter-bar mb-3">
+        <input class="form-control" id="d-q" placeholder="Search name, email, city…">
+        <select class="form-select" id="d-group"></select>
+        <select class="form-select" id="d-status"><option value="">All statuses</option><option value="available">Available</option><option value="unavailable">Unavailable</option><option value="blocked">Blocked</option></select>
+      </div>
+      <div class="ll-card table-responsive"><table class="table table-ll">
+        <thead><tr><th>Donor</th><th>Group</th><th>City</th><th>Contact</th><th>Status</th><th>Last donation</th><th class="text-end">Actions</th></tr></thead>
+        <tbody id="donors-body"></tbody>
+      </table></div>
+    </section>
+
+    <!-- ============ RECEIVERS ============ -->
+    <section class="dash-section d-none" id="sec-receivers">
+      <div class="filter-bar mb-3"><input class="form-control" id="rc-q" placeholder="Search name, email, city…"></div>
+      <div class="ll-card table-responsive"><table class="table table-ll">
+        <thead><tr><th>Receiver</th><th>City</th><th>Contact</th><th>Requests</th><th>Status</th><th>Joined</th><th class="text-end">Actions</th></tr></thead>
+        <tbody id="receivers-body"></tbody>
+      </table></div>
+    </section>
+
+    <!-- ============ REQUESTS ============ -->
+    <section class="dash-section d-none" id="sec-requests">
+      <div class="filter-bar mb-3">
+        <input class="form-control" id="q-q" placeholder="Search patient, hospital, city…">
+        <select class="form-select" id="q-status"><option value="">All statuses</option><option value="open">Open</option><option value="fulfilled">Fulfilled</option><option value="cancelled">Cancelled</option></select>
+        <select class="form-select" id="q-group"></select>
+        <select class="form-select" id="q-urg"><option value="">Any urgency</option><option value="critical">Critical</option><option value="urgent">Urgent</option><option value="normal">Planned</option></select>
+      </div>
+      <div class="ll-card table-responsive"><table class="table table-ll">
+        <thead><tr><th>Patient</th><th>Group</th><th>Hospital</th><th>Urgency</th><th>Responses</th><th>Status</th><th>Posted</th><th class="text-end">Actions</th></tr></thead>
+        <tbody id="requests-body"></tbody>
+      </table></div>
+    </section>
+
+    <!-- ============ BANKS ============ -->
+    <section class="dash-section d-none" id="sec-banks">
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <div class="text-muted small">Keep stock levels current so receivers can find the blood they need.</div>
+        <button class="btn btn-primary" id="bank-add"><i class="bi bi-plus-lg me-1"></i>Add blood bank</button>
+      </div>
+      <div class="row g-3" id="banks-grid"></div>
+    </section>
+
+    <!-- ============ CAMPS ============ -->
+    <section class="dash-section d-none" id="sec-camps">
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <ul class="nav nav-pills gap-2" id="camp-tabs">
+          <li class="nav-item"><button class="nav-link active" data-tab="upcoming">Upcoming</button></li>
+          <li class="nav-item"><button class="nav-link" data-tab="past">Past</button></li>
+        </ul>
+        <button class="btn btn-primary" id="camp-add"><i class="bi bi-plus-lg me-1"></i>Add donation camp</button>
+      </div>
+      <div class="row g-3" id="camps-grid"></div>
+    </section>
+
+    <!-- ============ ACTIVITY ============ -->
+    <section class="dash-section d-none" id="sec-activity">
+      <div class="ll-card p-4" style="max-width: 820px"><div id="feed"></div></div>
+    </section>
+  </main>
+</div>
+
+<!-- ============ BLOOD BANK MODAL ============ -->
+<div class="modal fade" id="bank-modal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable"><form class="modal-content" id="bank-form" novalidate>
+    <div class="modal-header"><h2 class="modal-title h5 fw-bold" id="bank-title">Add blood bank</h2><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="b-id">
+      <div class="row g-3">
+        <div class="col-md-8"><label class="form-label" for="b-name">Name</label><input class="form-control" id="b-name" required maxlength="100"></div>
+        <div class="col-md-4"><label class="form-label" for="b-city">City</label><input class="form-control" id="b-city" required maxlength="60"></div>
+        <div class="col-md-8"><label class="form-label" for="b-address">Address</label><input class="form-control" id="b-address" maxlength="160"></div>
+        <div class="col-md-4"><label class="form-label" for="b-hours">Opening hours</label><input class="form-control" id="b-hours" placeholder="24 hours" maxlength="40"></div>
+        <div class="col-12"><label class="form-label" for="b-phone">Phone</label><input class="form-control" id="b-phone" type="tel"></div>
+        <div class="col-12">
+          <label class="form-label">Stock (units available)</label>
+          <div class="stock-grid" id="b-stock"></div>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Location</label>
+          <div class="input-group mb-2">
+            <input class="form-control" id="b-place-q" placeholder="Search a place…">
+            <button class="btn btn-light" type="button" id="b-place-go"><i class="bi bi-search"></i></button>
+            <button class="btn btn-outline-primary" type="button" id="b-locate"><i class="bi bi-crosshair me-1"></i>My location</button>
+          </div>
+          <div id="b-map" class="map-box sm"></div>
+          <div class="form-text"><i class="bi bi-pin-map me-1"></i><span id="b-coords"></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" type="submit" id="b-save">Save blood bank</button></div>
+  </form></div>
+</div>
+
+<!-- ============ CAMP MODAL ============ -->
+<div class="modal fade" id="camp-modal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable"><form class="modal-content" id="camp-form" novalidate>
+    <div class="modal-header"><h2 class="modal-title h5 fw-bold" id="camp-title">Add donation camp</h2><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="c-id">
+      <div class="row g-3">
+        <div class="col-12"><label class="form-label" for="c-title">Camp title</label><input class="form-control" id="c-title" required maxlength="100"></div>
+        <div class="col-md-6"><label class="form-label" for="c-organizer">Organizer</label><input class="form-control" id="c-organizer" required maxlength="100"></div>
+        <div class="col-md-6"><label class="form-label" for="c-contact">Contact phone</label><input class="form-control" id="c-contact" type="tel"></div>
+        <div class="col-md-4"><label class="form-label" for="c-date">Date</label><input class="form-control" id="c-date" type="date" required></div>
+        <div class="col-md-4"><label class="form-label" for="c-time">Time</label><input class="form-control" id="c-time" placeholder="09:00 - 15:00" maxlength="40"></div>
+        <div class="col-md-4"><label class="form-label" for="c-city">City</label><input class="form-control" id="c-city" required maxlength="60"></div>
+        <div class="col-12"><label class="form-label" for="c-venue">Venue</label><input class="form-control" id="c-venue" required maxlength="140"></div>
+        <div class="col-12"><label class="form-label" for="c-desc">Description</label><textarea class="form-control" id="c-desc" rows="2" maxlength="300"></textarea></div>
+        <div class="col-12">
+          <label class="form-label">Location</label>
+          <div class="input-group mb-2">
+            <input class="form-control" id="c-place-q" placeholder="Search a place…">
+            <button class="btn btn-light" type="button" id="c-place-go"><i class="bi bi-search"></i></button>
+            <button class="btn btn-outline-primary" type="button" id="c-locate"><i class="bi bi-crosshair me-1"></i>My location</button>
+          </div>
+          <div id="c-map" class="map-box sm"></div>
+          <div class="form-text"><i class="bi bi-pin-map me-1"></i><span id="c-coords"></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" type="submit" id="c-save">Save camp</button></div>
+  </form></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script type="module" src="js/admin.js"></script>
+</body>
+</html>

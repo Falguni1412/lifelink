@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Log in – LifeLink</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+<div class="row g-0 auth-wrap">
+  <div class="col-lg-5 auth-side d-none d-lg-flex flex-column justify-content-between p-5">
+    <a class="brand text-white position-relative" href="index.html"><img src="assets/logo.svg" alt=""><span>Life<b style="color:#fff">Link</b></span></a>
+    <div class="position-relative">
+      <h2 class="fw-bold display-6 mb-4" style="letter-spacing:-.03em">Welcome back.<br>Someone may need you today.</h2>
+      <div class="point"><i class="bi bi-bell-fill"></i><div><b>Live emergency alerts</b><div class="small opacity-75">New compatible requests appear the moment they're posted.</div></div></div>
+      <div class="point"><i class="bi bi-geo-alt-fill"></i><div><b>Distance-aware matching</b><div class="small opacity-75">Requests and donors sorted by how close they are.</div></div></div>
+      <div class="point"><i class="bi bi-shield-lock-fill"></i><div><b>Privacy first</b><div class="small opacity-75">Your phone number is shared only when you accept.</div></div></div>
+    </div>
+    <div class="small opacity-75 position-relative">© <span id="yr"></span> LifeLink</div>
+  </div>
+
+  <div class="col-lg-7 d-flex align-items-center justify-content-center p-4">
+    <div class="auth-card">
+      <a class="brand d-lg-none mb-4" href="index.html"><img src="assets/logo.svg" alt=""><span>Life<b>Link</b></span></a>
+      <h1 class="fw-bold h2 mb-1" style="letter-spacing:-.03em">Log in to LifeLink</h1>
+      <p class="text-muted mb-4">Don't have an account? <a href="register.html" class="fw-semibold">Register</a></p>
+
+      <div id="notice" class="alert alert-warning d-none" role="alert"></div>
+
+      <form id="login-form" novalidate>
+        <div class="mb-3">
+          <label class="form-label" for="email">Email</label>
+          <input class="form-control" id="email" type="email" autocomplete="email" required placeholder="you@example.com">
+          <div class="invalid-feedback">Enter a valid email address.</div>
+        </div>
+        <div class="mb-2">
+          <label class="form-label d-flex justify-content-between" for="password">Password
+            <a href="#" id="forgot" class="fw-semibold small">Forgot password?</a></label>
+          <div class="input-group">
+            <input class="form-control" id="password" type="password" autocomplete="current-password" required minlength="6" placeholder="••••••••">
+            <button class="btn btn-light" type="button" id="toggle-pw" aria-label="Show password"><i class="bi bi-eye"></i></button>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-lg w-100 mt-4" id="submit" type="submit">Log in</button>
+      </form>
+
+      <div id="demo-box" class="mt-4 d-none">
+        <div class="d-flex align-items-center gap-2 text-muted small mb-2"><hr class="flex-grow-1 m-0"><span>Demo mode · try a sample account</span><hr class="flex-grow-1 m-0"></div>
+        <div class="row g-2" id="demo-accounts"></div>
+        <p class="small text-muted mt-3 mb-0">Add your Firebase keys in <code>js/config.js</code> to switch to real accounts.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script type="module" src="js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Register – LifeLink</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+<div class="row g-0 auth-wrap">
+  <div class="col-lg-4 auth-side d-none d-lg-flex flex-column justify-content-between p-5">
+    <a class="brand text-white position-relative" href="index.html"><img src="assets/logo.svg" alt=""><span>Life<b style="color:#fff">Link</b></span></a>
+    <div class="position-relative">
+      <h2 class="fw-bold display-6 mb-4" style="letter-spacing:-.03em">Join the people who show up.</h2>
+      <div class="point"><i class="bi bi-droplet-fill"></i><div><b>Donors</b><div class="small opacity-75">Get alerted when a compatible patient is nearby. You decide when you're available.</div></div></div>
+      <div class="point"><i class="bi bi-person-heart"></i><div><b>Receivers</b><div class="small opacity-75">Search donors and broadcast emergency requests in seconds.</div></div></div>
+      <div class="point"><i class="bi bi-eye-slash-fill"></i><div><b>Your privacy</b><div class="small opacity-75">Only an approximate (~1 km) location is shown to others. Phone numbers are shared only on acceptance.</div></div></div>
+    </div>
+    <div class="small opacity-75 position-relative">© <span id="yr"></span> LifeLink</div>
+  </div>
+
+  <div class="col-lg-8 d-flex justify-content-center p-4 p-md-5">
+    <div class="auth-card" style="max-width: 640px">
+      <a class="brand d-lg-none mb-4" href="index.html"><img src="assets/logo.svg" alt=""><span>Life<b>Link</b></span></a>
+      <h1 class="fw-bold h2 mb-1" style="letter-spacing:-.03em">Create your account</h1>
+      <p class="text-muted mb-4">Already registered? <a href="login.html" class="fw-semibold">Log in</a></p>
+
+      <form id="reg-form" novalidate>
+        <!-- role -->
+        <div class="row g-3 role-pick mb-4">
+          <div class="col-6">
+            <input type="radio" name="role" id="role-donor" value="donor" checked>
+            <label for="role-donor"><i class="bi bi-droplet-half"></i><div class="fw-bold">I want to donate</div><div class="small text-muted">Donor account</div></label>
+          </div>
+          <div class="col-6">
+            <input type="radio" name="role" id="role-receiver" value="receiver">
+            <label for="role-receiver"><i class="bi bi-person-heart"></i><div class="fw-bold">I need blood</div><div class="small text-muted">Receiver account</div></label>
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label" for="name">Full name</label>
+            <input class="form-control" id="name" autocomplete="name" required minlength="2" maxlength="80">
+            <div class="invalid-feedback">Please enter your name.</div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="phone">Phone number</label>
+            <input class="form-control" id="phone" type="tel" autocomplete="tel" required placeholder="+91 98765 43210">
+            <div class="invalid-feedback">Enter a valid phone number.</div>
+          </div>
+          <div class="col-12">
+            <label class="form-label" for="email">Email</label>
+            <input class="form-control" id="email" type="email" autocomplete="email" required>
+            <div class="invalid-feedback">Enter a valid email address.</div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="password">Password</label>
+            <input class="form-control" id="password" type="password" autocomplete="new-password" required minlength="6">
+            <div class="invalid-feedback">At least 6 characters.</div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="confirm">Confirm password</label>
+            <input class="form-control" id="confirm" type="password" autocomplete="new-password" required>
+            <div class="invalid-feedback">Passwords don't match.</div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label" for="city">City / town</label>
+            <input class="form-control" id="city" autocomplete="address-level2" required maxlength="60">
+            <div class="invalid-feedback">Please enter your city.</div>
+          </div>
+          <div class="col-md-6 donor-only">
+            <label class="form-label" for="bloodGroup">Blood group</label>
+            <select class="form-select" id="bloodGroup" required></select>
+            <div class="invalid-feedback">Select your blood group.</div>
+          </div>
+          <div class="col-md-6 donor-only">
+            <label class="form-label" for="lastDonation">Last donation <span class="text-muted fw-normal">(optional)</span></label>
+            <input class="form-control" id="lastDonation" type="date">
+          </div>
+          <div class="col-md-6 donor-only d-flex align-items-end">
+            <div class="form-check form-switch pb-2">
+              <input class="form-check-input" type="checkbox" role="switch" id="available" checked>
+              <label class="form-check-label fw-semibold" for="available">I'm available to donate now</label>
+            </div>
+          </div>
+
+          <!-- photo -->
+          <div class="col-12">
+            <label class="form-label">Profile photo <span class="text-muted fw-normal">(optional)</span></label>
+            <div class="photo-drop">
+              <div class="photo-preview" id="photo-preview"><i class="bi bi-person"></i></div>
+              <div>
+                <input class="form-control form-control-sm" type="file" id="photo" accept="image/*">
+                <div class="form-text">JPG or PNG, up to 5 MB.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- location -->
+          <div class="col-12">
+            <label class="form-label">Your location <span class="text-muted fw-normal">(click the map or drag the pin)</span></label>
+            <div class="input-group mb-2">
+              <input class="form-control" id="reg-place-q" placeholder="Search a place, e.g. your area or landmark">
+              <button class="btn btn-light" type="button" id="reg-place-go"><i class="bi bi-search"></i></button>
+              <button class="btn btn-outline-primary" type="button" id="reg-locate"><i class="bi bi-crosshair me-1"></i>Use my location</button>
+            </div>
+            <div id="reg-map" class="map-box sm"></div>
+            <div class="form-text"><i class="bi bi-pin-map me-1"></i><span id="reg-coords">No location selected</span> · used for nearby matching</div>
+          </div>
+
+          <div class="col-12">
+            <div class="form-check donor-only mb-2">
+              <input class="form-check-input" type="checkbox" id="adult">
+              <label class="form-check-label small" for="adult">I confirm that I am 18 or older and will only donate when I'm in good health.</label>
+              <div class="invalid-feedback">Please confirm to continue.</div>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="terms" required>
+              <label class="form-check-label small" for="terms">I agree that my profile may be shown to other LifeLink users as described above.</label>
+              <div class="invalid-feedback">Please accept to continue.</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-lg w-100 mt-4" id="submit" type="submit">Create account</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script type="module" src="js/register.js"></script>
+</body>
+</html>

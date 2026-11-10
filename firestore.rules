@@ -1,0 +1,81 @@
+rules_version = '2';
+
+// LifeLink security rules.  Deploy with:  firebase deploy --only firestore:rules
+// (or paste into Firebase console -> Firestore Database -> Rules).
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- helpers ------------------------------------------------
+    function signedIn() { return request.auth != null; }
+    function isOwner(uid) { return signedIn() && request.auth.uid == uid; }
+    function myProfile() { return get(/databases/$(database)/documents/users/$(request.auth.uid)).data; }
+    function isAdmin() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && myProfile().role == 'admin';
+    }
+
+    // ---------- users: private profiles (phone, exact location) --------
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      // People can only sign up as donor or receiver. Admins are promoted by
+      // editing the `role` field in the Firebase console (see README).
+      allow create: if isOwner(uid)
+        && request.resource.data.role in ['donor', 'receiver']
+        && request.resource.data.blocked == false;
+      // Owners may edit their profile but never their role or blocked flag.
+      allow update: if isAdmin()
+        || (isOwner(uid)
+            && request.resource.data.role == resource.data.role
+            && request.resource.data.blocked == resource.data.blocked);
+      allow delete: if isAdmin();
+    }
+
+    // ---------- donors: public, privacy-safe donor cards ---------------
+    // Holds only name, blood group, city, ~1 km rounded coordinates, availability.
+    match /donors/{uid} {
+      allow read: if signedIn();
+      allow create, update: if isOwner(uid) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ---------- requests ------------------------------------------------
+    match /requests/{id} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.receiverId == request.auth.uid
+        && request.resource.data.status == 'open';
+      allow update: if isAdmin()
+        || (signedIn() && resource.data.receiverId == request.auth.uid)
+        // Any donor may add/replace ONLY their own entry in `responses`.
+        || (signedIn()
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['responses'])
+            && request.resource.data.responses.diff(resource.data.responses).affectedKeys().hasOnly([request.auth.uid]));
+      allow delete: if isAdmin() || (signedIn() && resource.data.receiverId == request.auth.uid);
+    }
+
+    // ---------- donation history (private to the donor) ----------------
+    match /donations/{id} {
+      allow read: if signedIn() && (resource.data.donorId == request.auth.uid || isAdmin());
+      allow create: if signedIn() && request.resource.data.donorId == request.auth.uid;
+      allow update, delete: if signedIn() && (resource.data.donorId == request.auth.uid || isAdmin());
+    }
+
+    // ---------- blood banks & camps: public read, admin write ----------
+    match /bloodBanks/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /camps/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ---------- activity log -------------------------------------------
+    match /activity/{id} {
+      allow read: if isAdmin();
+      allow create: if signedIn() && request.resource.data.actorId == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+  }
+}

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LifeLink – Smart Blood Donation &amp; Emergency Connect</title>
+  <meta name="description" content="LifeLink connects blood donors with people who urgently need blood. Search donors by blood group and location, send emergency requests, and track responses in real time.">
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+</head>
+<body id="top">
+
+<!-- ================= NAV ================= -->
+<nav class="navbar navbar-expand-lg site-nav sticky-top">
+  <div class="container">
+    <a class="brand" href="#top"><img src="assets/logo.svg" alt=""><span>Life<b>Link</b></span></a>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-label="Toggle navigation">
+      <i class="bi bi-list fs-2"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav mx-lg-auto gap-lg-2">
+        <li class="nav-item"><a class="nav-link" href="#how">How it works</a></li>
+        <li class="nav-item"><a class="nav-link" href="#roles">Who it's for</a></li>
+        <li class="nav-item"><a class="nav-link" href="#compat">Compatibility</a></li>
+        <li class="nav-item"><a class="nav-link" href="#banks">Blood banks</a></li>
+        <li class="nav-item"><a class="nav-link" href="#camps">Camps</a></li>
+      </ul>
+      <div id="nav-auth" class="d-flex gap-2 mt-3 mt-lg-0">
+        <a class="btn btn-light" href="login.html">Log in</a>
+        <a class="btn btn-primary" href="register.html">Register</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero pt-5 pb-5">
+  <div class="container py-lg-4 pb-5">
+    <div class="row align-items-center gx-lg-5 gy-5">
+      <div class="col-lg-6">
+        <span class="pill-tag mb-4"><span class="pulse-dot"></span> Real-time emergency blood requests</span>
+        <h1 class="mb-4">Find blood donors in minutes, <em>not hours.</em></h1>
+        <p class="lead text-body-secondary mb-4" style="max-width: 34rem">
+          LifeLink connects people who urgently need blood with willing donors nearby. Search by blood group and
+          location, send an emergency request, and watch responses arrive live.
+        </p>
+        <div class="d-flex flex-wrap gap-3">
+          <a href="register.html?role=receiver" class="btn btn-primary btn-lg px-4"><i class="bi bi-lightning-charge-fill me-2"></i>Request blood</a>
+          <a href="register.html?role=donor" class="btn btn-light btn-lg px-4"><i class="bi bi-droplet-fill me-2"></i>Become a donor</a>
+        </div>
+        <div class="d-flex flex-wrap align-items-center gap-4 mt-4 small text-muted">
+          <span><i class="bi bi-shield-check text-brand me-1"></i>Donor phone numbers stay private</span>
+          <span><i class="bi bi-geo-alt text-brand me-1"></i>Map-based search</span>
+          <span><i class="bi bi-phone text-brand me-1"></i>Works on any device</span>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="hero-visual">
+          <div class="ll-card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <strong>Emergency alerts</strong>
+              <span class="urg-badge urg-critical"><i class="bi bi-lightning-charge-fill me-1"></i>2 critical</span>
+            </div>
+            <div class="ll-card flat req-card urg-critical p-3 mb-3">
+              <div class="d-flex gap-3 align-items-center">
+                <span class="blood-chip lg">B+</span>
+                <div class="flex-grow-1">
+                  <div class="fw-bold">2 units needed · Surgery tomorrow</div>
+                  <div class="small text-muted"><i class="bi bi-hospital me-1"></i>City General Hospital · 3.2 km away</div>
+                </div>
+              </div>
+              <div class="d-flex gap-2 mt-3">
+                <span class="btn btn-primary btn-sm flex-grow-1 disabled">Accept</span>
+                <span class="btn btn-outline-secondary btn-sm disabled">Decline</span>
+              </div>
+            </div>
+            <div class="ll-card flat req-card urg-urgent p-3">
+              <div class="d-flex gap-3 align-items-center">
+                <span class="blood-chip lg">O-</span>
+                <div class="flex-grow-1">
+                  <div class="fw-bold">1 unit needed · Accident case</div>
+                  <div class="small text-muted"><i class="bi bi-hospital me-1"></i>District Hospital · 6.8 km away</div>
+                </div>
+                <span class="st-badge st-fulfilled">3 donors accepted</span>
+              </div>
+            </div>
+            <p class="small text-muted text-center mt-3 mb-0">Illustrative preview</p>
+          </div>
+          <div class="ll-card p-3 float-card d-none d-md-block" style="left: -8px; bottom: -6px; width: 200px;">
+            <div class="small text-muted mb-2">Donors by group</div>
+            <div class="mini-bars"><i style="height:55%"></i><i style="height:30%"></i><i style="height:70%"></i><i style="height:25%"></i><i style="height:40%"></i><i style="height:20%"></i><i style="height:95%"></i><i style="height:35%"></i></div>
+          </div>
+          <div class="ll-card p-3 float-card d-none d-md-flex align-items-center gap-2" style="right: -6px; top: -4px;">
+            <span class="stat-icon green" style="width:38px;height:38px;font-size:1.1rem"><i class="bi bi-check2-circle"></i></span>
+            <div><div class="fw-bold small">Request fulfilled</div><div class="small text-muted">Live updates</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= LIVE STATS ================= -->
+<div class="container">
+  <div class="stat-strip">
+    <div class="row g-0 text-center">
+      <div class="col-6 col-md-3 item"><div class="num" id="st-banks">–</div><div class="small text-muted">Blood banks listed</div></div>
+      <div class="col-6 col-md-3 item"><div class="num" id="st-camps">–</div><div class="small text-muted">Upcoming donation camps</div></div>
+      <div class="col-6 col-md-3 item"><div class="num">8</div><div class="small text-muted">Blood groups supported</div></div>
+      <div class="col-6 col-md-3 item"><div class="num">Live</div><div class="small text-muted">Real-time request alerts</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= HOW IT WORKS ================= -->
+<section id="how" class="section-pad">
+  <div class="container">
+    <div class="text-center mb-5 reveal">
+      <div class="eyebrow mb-2">How it works</div>
+      <h2 class="section-title display-6">Three steps from need to donation</h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4 reveal"><div class="ll-card step-card">
+        <div class="step-num"><i class="bi bi-person-plus"></i></div>
+        <h3 class="h5 fw-bold">1. Create your account</h3>
+        <p class="text-muted mb-0">Sign up as a donor or a receiver in under a minute. Pin your location on the map so matches are truly nearby.</p>
+      </div></div>
+      <div class="col-md-4 reveal"><div class="ll-card step-card">
+        <div class="step-num"><i class="bi bi-search-heart"></i></div>
+        <h3 class="h5 fw-bold">2. Search or send an alert</h3>
+        <p class="text-muted mb-0">Receivers search available donors by blood group, city and distance, or broadcast an emergency request to everyone compatible.</p>
+      </div></div>
+      <div class="col-md-4 reveal"><div class="ll-card step-card">
+        <div class="step-num"><i class="bi bi-telephone-inbound"></i></div>
+        <h3 class="h5 fw-bold">3. Connect and donate</h3>
+        <p class="text-muted mb-0">Donors accept or decline in one tap. When someone accepts, their contact details appear instantly on the request.</p>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ROLES ================= -->
+<section id="roles" class="section-pad section-soft">
+  <div class="container">
+    <div class="text-center mb-5 reveal">
+      <div class="eyebrow mb-2">Built for everyone involved</div>
+      <h2 class="section-title display-6">One platform, three dashboards</h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-lg-4 reveal"><div class="ll-card role-card">
+        <span class="stat-icon"><i class="bi bi-droplet-half"></i></span>
+        <h3 class="h5 fw-bold mt-3 mb-0">Donors</h3>
+        <ul>
+          <li><i class="bi bi-check2-circle"></i>Switch availability on or off</li>
+          <li><i class="bi bi-check2-circle"></i>See compatible requests near you</li>
+          <li><i class="bi bi-check2-circle"></i>Accept or decline in one tap</li>
+          <li><i class="bi bi-check2-circle"></i>Donation history and next-eligible date</li>
+        </ul>
+      </div></div>
+      <div class="col-lg-4 reveal"><div class="ll-card role-card">
+        <span class="stat-icon blue"><i class="bi bi-person-heart"></i></span>
+        <h3 class="h5 fw-bold mt-3 mb-0">Receivers</h3>
+        <ul>
+          <li><i class="bi bi-check2-circle"></i>Search donors by group, city and radius</li>
+          <li><i class="bi bi-check2-circle"></i>Send emergency or direct requests</li>
+          <li><i class="bi bi-check2-circle"></i>Track every response in real time</li>
+          <li><i class="bi bi-check2-circle"></i>Find nearby blood banks and camps</li>
+        </ul>
+      </div></div>
+      <div class="col-lg-4 reveal"><div class="ll-card role-card">
+        <span class="stat-icon violet"><i class="bi bi-shield-check"></i></span>
+        <h3 class="h5 fw-bold mt-3 mb-0">Admins</h3>
+        <ul>
+          <li><i class="bi bi-check2-circle"></i>Manage donors, users and requests</li>
+          <li><i class="bi bi-check2-circle"></i>Maintain blood banks and stock levels</li>
+          <li><i class="bi bi-check2-circle"></i>Publish donation camps</li>
+          <li><i class="bi bi-check2-circle"></i>Full platform activity feed</li>
+        </ul>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= COMPATIBILITY ================= -->
+<section id="compat" class="section-pad">
+  <div class="container">
+    <div class="row gx-lg-5 gy-5 align-items-center">
+      <div class="col-lg-5 reveal">
+        <div class="eyebrow mb-2">Know your match</div>
+        <h2 class="section-title display-6 mb-3">Blood group compatibility</h2>
+        <p class="text-muted">LifeLink automatically notifies donors whose blood group is compatible with a request, so the right people see it first. This chart shows red-cell compatibility.</p>
+        <p class="small text-muted mb-0"><i class="bi bi-info-circle me-1"></i>General guidance only. The hospital or blood bank makes the final decision on every transfusion.</p>
+      </div>
+      <div class="col-lg-7 reveal">
+        <div class="ll-card p-3 table-responsive">
+          <table class="table table-sm compat-table mb-0" id="compat-table"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BLOOD BANKS ================= -->
+<section id="banks" class="section-pad section-soft">
+  <div class="container">
+    <div class="text-center mb-5 reveal">
+      <div class="eyebrow mb-2">Nearby help</div>
+      <h2 class="section-title display-6">Blood banks on the map</h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-lg-7 reveal"><div id="home-map" class="map-box"></div></div>
+      <div class="col-lg-5 reveal"><div id="bank-list" class="d-grid gap-3" style="max-height: 440px; overflow:auto"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CAMPS ================= -->
+<section id="camps" class="section-pad">
+  <div class="container">
+    <div class="text-center mb-5 reveal">
+      <div class="eyebrow mb-2">Get involved</div>
+      <h2 class="section-title display-6">Upcoming donation camps</h2>
+    </div>
+    <div id="camp-list" class="row g-4"></div>
+  </div>
+</section>
+
+<!-- ================= CTA ================= -->
+<section class="pb-5">
+  <div class="container">
+    <div class="cta-band p-5 text-center reveal">
+      <h2 class="section-title display-6 mb-3">Every request answered is a life supported</h2>
+      <p class="mb-4 opacity-75 mx-auto" style="max-width: 36rem">Join as a donor in a minute. You choose when you're available, and your phone number is only shared when you accept a request.</p>
+      <div class="d-flex flex-wrap gap-3 justify-content-center">
+        <a href="register.html?role=donor" class="btn btn-light btn-lg px-4">Become a donor</a>
+        <a href="login.html" class="btn btn-outline-light btn-lg px-4">Log in</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer py-5">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-5">
+        <a class="brand text-white mb-3" href="#top"><img src="assets/logo.svg" alt=""><span>Life<b>Link</b></span></a>
+        <p class="small mb-0" style="max-width: 26rem">A community platform that helps blood donors and patients find each other quickly. LifeLink is a coordination tool, not a medical service. In a medical emergency, contact your local emergency number or nearest hospital first.</p>
+      </div>
+      <div class="col-6 col-lg-3"><div class="fw-bold text-white mb-2">Platform</div>
+        <div class="d-grid gap-1 small"><a href="register.html?role=donor">Become a donor</a><a href="register.html?role=receiver">Request blood</a><a href="login.html">Log in</a></div></div>
+      <div class="col-6 col-lg-4"><div class="fw-bold text-white mb-2">Explore</div>
+        <div class="d-grid gap-1 small"><a href="#how">How it works</a><a href="#compat">Compatibility chart</a><a href="#banks">Blood banks</a><a href="#camps">Donation camps</a></div></div>
+    </div>
+    <hr class="border-secondary my-4">
+    <div class="small">© <span id="yr"></span> LifeLink. Map data © OpenStreetMap contributors.</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script type="module" src="js/home.js"></script>
+</body>
+</html>
